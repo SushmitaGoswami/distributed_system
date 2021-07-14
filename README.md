@@ -130,22 +130,13 @@ Examples are as follows
 
 Please refer to this example code.
 
+### Service Registry & Discovery
+**Static Service registry configuration** -  Each node contains a configuration which contains the addresss of all other nodes in the cluster. This architecture needs manual intervention when a new node joins or an existing node exits.
 
+**Semi dynamic service registry** - In this architecture, along with maintaining a centralized configuration file, Configuration Management services like pupet or chef is used to update the configurations dynamically.
 
+**Dynamic Service Registry** - Zookeeper provides support for dynamic service registry. It can be designed in the following way.
 
- 
-
- 
-
-
-
-
-
-
-
-
-
-
-
+First, a permanent znode named /service_registry is created and several ephemeral znodes are created as its children. Each ephemeral znode contains address and port of the application running in the corresponding physical node. External node can access the children of the /service_registry node to get the addresses of other nodes. This can be easily fitted to an leader-worker/peer-to-peer to communication. In the leader-wroker architecture, when a worker node joins the cluster, it creates a znode under the serviceregistry node and when a node is elected as leader, it takes the updated addresses and also deregister itself from the cluster i.e. deletes the corresponding ephemeral node.
 
 
