@@ -128,7 +128,7 @@ Examples are as follows
 - **getData(..)** - It is possible to attach an one time triggered watcher to this method which notifies about any change in the content of the znode.
 - **getChildren(..)** - It is possible to attach an one time triggered watcher to this method which notifies about any change in the children of that znode.
 
-Please refer to this example code.
+**Please refer to this example code here.**
 
 ### Service Registry & Discovery
 **Static Service registry configuration** -  Each node contains a configuration which contains the addresss of all other nodes in the cluster. This architecture needs manual intervention when a new node joins or an existing node exits.
@@ -137,6 +137,50 @@ Please refer to this example code.
 
 **Dynamic Service Registry** - Zookeeper provides support for dynamic service registry. It can be designed in the following way.
 
-First, a permanent znode named /service_registry is created and several ephemeral znodes are created as its children. Each ephemeral znode contains address and port of the application running in the corresponding physical node. External node can access the children of the /service_registry node to get the addresses of other nodes. This can be easily fitted to an leader-worker/peer-to-peer to communication. In the leader-wroker architecture, when a worker node joins the cluster, it creates a znode under the serviceregistry node and when a node is elected as leader, it takes the updated addresses and also deregister itself from the cluster i.e. deletes the corresponding ephemeral node.
+First, a permanent znode named /service_registry is created and several ephemeral znodes are created as its children. Each ephemeral znode contains address and port of the application running in the corresponding physical node. External node can access the children of the /service_registry node to get the addresses of other nodes. This can be easily fitted to a leader-worker/peer-to-peer communication. In the leader-wroker architecture, when a worker node joins the cluster, it creates a znode under the /service_registry node and when a node is elected as leader, it takes the updated addresses and also deregister itself from the cluster i.e. deletes the corresponding ephemeral node from the cluster.
+
+**Please refer to this example code here.**
+
+Following are 4 nodes running. The top left corner one is elected as leader. As per the sequence of node creation, following is the status
+![zoo1_LI](https://user-images.githubusercontent.com/20486206/125905342-193a741d-ba00-4ea2-a4e9-0a023ca3cc47.jpg)
+
+When the 2nd node dies
+![zoo2_LI](https://user-images.githubusercontent.com/20486206/125905446-35461083-3566-4c2e-9cd5-a410cd83d3f2.jpg)
+
+when the 4th node dies
+![zoo3_LI](https://user-images.githubusercontent.com/20486206/125905468-798efd00-75a9-42bb-9cef-a1a807824158.jpg)
+
+when all the nodes rejoined and leader dies.
+![zoo4_LI](https://user-images.githubusercontent.com/20486206/125905490-58bd31ee-59e6-47ae-b11d-4c9fe850c20d.jpg)
+
+
+## Communication among nodes
+Different nodes in a cluster communicates among each other using HTTP protocol. Let's discuss the difference between HTTP 1.1 and HTTP 1.2
+
+**HTTP 1.1**
+1. For every request 1 connection is being created between server and client. Next request usually needs to wait for a specific time until the response for the previous request returns. If it takes more time to return, then a new connection is being created to send the 2nd request. So, there might be some time, when there will be many connections created and which may block the system. However, the no of connection is limited by the no of available ports and operating system.
+
+2. Headers are basically key/value pair and hence it is easy to debug using some packet tracing tool like wireshark.
+
+3. The only advantage is if a connection breaks, it will not cause any harm to other connections.
+
+
+**HTTP 1.2**
+
+1. Multiple requests are interleaved in a single connection.
+
+2. Headers are being compressed which reduces the payload size, but it will make this hard to debug.
+
+
+HTTP Connection can be either of the two types.
+1. Synchronous
+2. Asynchronous
+
+In order to achieve the best performance, HTTP Connection pooling is being used. 
+1. HTTP 1.2 by default supports Connection pooling
+2. For HTTP 1.1, some client provides the pooling by default, if not we need to se it by saying "keep alive" to true.
+
+
+
 
 
