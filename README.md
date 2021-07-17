@@ -271,6 +271,22 @@ Topic is a collection of ordered queues and each queue is called Partition. Each
 2. In order to use kafka in a publisher/subscriber architecture, each consumer needs to be present in different consumer group and when publisher publish a message, it will be broadcasted to multiple consumers.
 
 
+### Basic Commands
 
- 
+1. **Start Kafka Server** - kafka-server-start.bat config/server.properties
+2. **Create topic** - kafka-topics.bat --create --topic chat --bootstrap-server localhost:9092 --replication-factor 3 --partitions 3
+3. **Describe a topic** - kafka-topics.bat --bootstrap-server localhost:9092 --describe chat1
+ ![image](https://user-images.githubusercontent.com/20486206/126038809-18ababec-ae5f-4d82-b907-261d67dcd408.png)
+4. **Send message using a producer** - kafka-console-producer.bat --bootstrap-server localhost:9092 --topic chat 1st 2nd ...  .If producer doesn't mention the partition of the topic while sending a message, kafka will hash the key and based on that store the message in that partition. If no key is mentioned, then kafka will use round robin method to distriute the load among multiple partition. 
+5. **Consume message using a consumer** - kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic chat --from-beginning
+
+
+**Please refer to this basic example.**
+
+## Distributed Database
+A distributed database (DDB) is an integrated collection of databases that is physically distributed across sites in a computer network. 
+
+### Problem with the centralized database
+1. 
+
 
