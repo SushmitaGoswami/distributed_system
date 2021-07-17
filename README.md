@@ -181,6 +181,56 @@ In order to achieve the best performance, HTTP Connection pooling is being used.
 2. For HTTP 1.1, some client provides the pooling by default, if not we need to se it by saying "keep alive" to true.
 
 
+### Different semantics of message delivery in a distributed system
+
+1. **At most once** - Each messaged will be sent by the client to server at most once. But there may be some cases where message is lost because the server doesn't receive or process the message for some reasons. This method is applicable to some of the following cases.
+   - Sending notification to user
+   - Message delivery or logging
+
+2. **At least once** - A message is delivered between client and server atleast once. This is applicable to following instances where state of the system would be same when an operation is performed only once and n times. Following are some of the examples.
+   - Reading the first line of a file.
+   - Updating the status of an user to active.
+   - Deleting a record.
+
+But this might not be applicable to the other cases like,
+   - Appending a line to a file.
+   - Banking transaction etc.
+
+There are basically two types of operation
+   - **IDEMPOTENT** - Some of the operations which should be performed only once.
+   - **NON-IDEMPOTENT** - Operations that has same effect even if it is performed multiple times instead of once.
+
+**Strategy which may be used in distributed system**
+Client sends a sequence no and retry variable for each message to server. Server checks the sequence no and retry variable. Server keeps the sequence no each time it updates a message. Next time, if it receives a message with same sequence id and a true retry value, then it will match the received sequence no with the one stored in the database, if it matches, then basically last time, the server has performed the operation, but the client hasn't received any response yet. So, it will send an acknowledgement to the client. Now, when the server finds that the sequence no doesn't matches, it will perform the updates and send the acknowledgement to the client.
+
+
+## Load Balancing
+
+Load balancing is defined as the methodical and efficient distribution of network or application traffic across multiple servers in a server farm.
+
+### What is the motivation behind load balancing?
+Let's say, you have a cluster of backend servers and an user facing front end server. When the load on front end server increases, it may got down. So, we may scale the front end servers and create a cluster. But then, user has to know all the addresses of different front end server to send request to. There will be a need to maintain the addresses via a service registry implementation. Moreover, for each client, we have to duplicate the logic for balancing the load among different front end servers. 
+
+Here comes the load balancer which not only abstract the cluster of front end server from the user, but also it maintains high availability of the system by distributing the load among multiple front end servers.
+
+### Different types of load balancers
+1. **Layer 4 (Transport layer) load balancer** - Transport layer load balancer is the simplest kind of load balancer. It checks 4 tuples i.e. source and destination IP and port to distribute the load amond multiple servers.
+2. **Layer 7 (Application layer) load balancer** - Application layer load balancer inspect the request method, parameter, header to distribute the load.
+
+
+### Different strategies of load balancing
+
+1. **Round Robin**  - In this method, load is evenly distributed. But it has flaws. Let's say, we have a load balancer which is balancing the load among 3 different backend servers. Now the 2nd server is receiving all the POST requests and after sometime, it may break down. And similarly if this continues, entire cluster will become stale.
+2. **Weighted Round Robin** - In this method, a weight is assigned to each server and accordingly load is distributed. Let's say, there are 2 server and assigned weights are 2,1. Now, for every 3 requests, 1st server will receive 2 requests and 2nd one will receive only 1 request.
+3. **Source IP Hashing** - In order to maintain the sticky session, it is possible to hash the source ip using a deterministic hashing algorithm and forward the request accordingly.
+
+But these approaches have flaws. One of them is these methods don't consider the present load on the servers. Following are some of the alternatives.
+
+1. **Least Connection** - Load balancer forward the requests based on the number of connections each server currently holds.
+2. **Weighted Response time** - Load balancer checks the health of each server and forward the request to that server which response at the earliest.
+3. **Agent based** - In the agent based load balancing, an agent calculates the cpu, memory usage and send those information to the load balancer which then decides and routes the traffic based on that.
+
+
 
 
 
