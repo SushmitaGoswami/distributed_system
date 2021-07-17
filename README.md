@@ -231,6 +231,30 @@ But these approaches have flaws. One of them is these methods don't consider the
 3. **Agent based** - In the agent based load balancing, an agent calculates the cpu, memory usage and send those information to the load balancer which then decides and routes the traffic based on that.
 
 
+## Message Brokers
+
+Message broker (also known as an integration broker or interface engine) is an intermediary computer program module that translates a message from the formal messaging protocol of the sender to the formal messaging protocol of the receiver.
+
+### What is the motivation behind message broker?
+Let's discuss problems with the following scenarios,
+
+1. **Direct Communication** - Let's say, there are 4 services, purchase, billing, shipping and notification. When an user makes a purchase, gateway transfers the calls to the purchase service and then it consecutively calls other services. Now, when any of the service in the chain gets down, the entire chain breaks.
+2. **Publisher vs subscriber model** - Let's say, the purchase service needs to sends the message to a sets of analytical servers which have subscribed to the event when an user makes a purchase. But in this scenario, the purchase service needs to open several connections between client and server.
+3. **Heavy traffic** - Let's say, in case of a direct communication between two services, one service may gets overwhelmed when other service is sending data to it.
+
+So, the solution is to use a message broker which follows event driven publisher/subscriber architecture and act as an intermidiator between two services to decouple the operations of two services while providing some of the following additionl functionalities beside sending data between two parties asynchronously,
+ - Data Queuing
+ - Data Validation
+ - Routing
+ 
+ Message brokers are designed to work in a distributed manner to maintain the scalability while avoiding the single point of failure and fault tolerance. However, as a new component is being introduced, it increases the latency.
+ 
+So, the  idea is to use message broker as 
+1. distributed queue to be used in direct communication.
+2. as a midiator in a publisher and subscriber model.
 
 
+## Apache Kafka - distribued Streaming and messaging platform
+
+ 
 
