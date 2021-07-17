@@ -254,7 +254,23 @@ So, the  idea is to use message broker as
 2. as a midiator in a publisher and subscriber model.
 
 
-## Apache Kafka - distribued Streaming and messaging platform
+## Apache Kafka - distributed streaming and messaging platform
+Apache kafka is a distributed, fault tolerand and highly scalable hogh performance streaming platform.
+
+### Terminologies
+1. Producer - Actor which sends the data.
+2. Consumer - Actor which receives the message.
+3. Kafka broker - middle man between producer and consumer. 
+4. Topic - Kafka maintains a sets of message of same type in a predefined structure named Topic.
+
+### Distributed and scalable architecture of Topic
+Topic is a collection of ordered queues and each queue is called Partition. Each partition is basically an ordered queue which stores the messages in an order it in queued. Each message is assigned an unique number w.r.t to a partition, named Offset. So, a size of a topic is basically limited to that machine in which that broker is running. In order to scale the topic, it divides it into multiple partition and each partition is stored in multiple kafka brokers. Now, what if any of kafka broker fails? The partition stored in that broker machine will also be lost. Hence, kafka maintains multiple copies of a single partition. Each partition is being hold by a leader broker which performs all the read and write. Whereas, all other remainging broker which will store the other copies will just follow leader. So, when the leader fails, any of the followers can replace the leader for that partition.
+
+### Distributed and scalable architecture of Consumer
+1. In order to scale the message processing among multiple consumer, kafka maintains a predefined consumer group for a set of consumers.
+2. In order to use kafka in a publisher/subscriber architecture, each consumer needs to be present in different consumer group and when publisher publish a message, it will be broadcasted to multiple consumers.
+
+
 
  
 
