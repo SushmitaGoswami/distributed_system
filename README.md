@@ -311,10 +311,22 @@ Solution to the hash based sharding is Dynamic Hashing. In the approach. entire 
 
 There are some problems with consistent hashing too. For example, if the deterministic hash function always maps more keys to a single node, then that node may be overloaded. Hence multiple hash function can be used to map the keys. In this way, a single node can be assigned to keys from multiple different ranges from the hash space.
 
+### Data Replication.
+In order to avoid any failure of a node and loss of a shard, multiple copies of same data would be maintained. Now, the question is how data between different copies would be synced.
 
+#### Different Architentures
 
+1. **Eventual Consistency** - All the writes will be done in master node and data will be synced asynchronously to slave nodes. But user may find stale data at any point. But it will ensure high availibity and lower latency.
+2. **Strict Consistency** -  Write operation would be completed only after all the data would be synced to slave. But it will slow down the system. so the solution is to use Quorum Consensus.
 
+#### Quorum Consensus
+Let's define,
+R = no of nodes a reader needs to read from.
+W = no of nodes a writer needs to write to.
+N = total no of nodes in a cluster.
 
+R + W > N
 
+if the abode formula is maintained then, there would be atleast 1 overlapping node. For eahc record, along with the data, version is maintained. So when a reader performs a read, it will check the version field of all the different versions of the data read from different cluster and atleast one will show the updated data.
 
-
+For read intensive operation, R can be kept as 2 to increase the performance of read operation.
