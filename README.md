@@ -287,6 +287,34 @@ Topic is a collection of ordered queues and each queue is called Partition. Each
 A distributed database (DDB) is an integrated collection of databases that is physically distributed across sites in a computer network. 
 
 ### Problem with the centralized database
-1. 
+1. **Single point of failure** 
+2. **Latency while accessing the application from different continents.**
+3. **Parallesim is limited by no of cores available in the machine.**
+4. **Amount of data can be stored is also limited by the storage of the system.**
+
+### Sharding
+Sharding is one of the techniques being used to scale a database. The entire data is divided into multiple chunks and stored in different computers. Sharding can be of either of two types,
+
+1. **Hash Based Sharding** - In case of hash based sharding a deterministic has function is used over the key to find the hash. But in this method, the closely related data can be distributed evenly and hence for the range based queries, it will not be optimized.
+2. **Range Based Sharding** - In case of a range based sharding, data is divided into chunks based on some range of a given column/field.
+
+Sharding introduces complexity as we need to aggregate the data from different shard to find the result of a query. NOSQL databases are designed to be distributed. However, these dbs doesn't gurrantee the ACID property.
+
+#### Issues with the hash based sharding
+1. When a new shard is added or a shard is removed, we need to redistribute the data.
+2. What if some of the computing nodes doesn't have enough capacity.
+
+### Dynamic Hashing
+Solution to the hash based sharding is Dynamic Hashing. In the approach. entire key space is considered as a ring and a range is assigned to individual nodes. When a new node is added, only those range of keys need to be assigned to this node and the node from which these keys have been taked would be restructured. This method is also called consistent hashing. Moreover, loads can be distributed based on capacity of the nodes.
+
+![image](https://user-images.githubusercontent.com/20486206/126060500-29cfeb1b-bad8-4074-a6ce-167b0d4d3c45.png)
+
+There are some problems with consistent hashing too. For example, if the deterministic hash function always maps more keys to a single node, then that node may be overloaded. Hence multiple hash function can be used to map the keys. In this way, a single node can be assigned to keys from multiple different ranges from the hash space.
+
+
+
+
+
+
 
 
